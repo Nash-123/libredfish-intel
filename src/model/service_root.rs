@@ -77,6 +77,7 @@ pub enum RedfishVendor {
     P3809, // dummy for P3809, needs to be set to NvidiaGH200 or NvidiaGBSwitch based on chassis
     LiteOnPowerShelf,
     DeltaPowerShelf,
+    Intel,
     Sushy,
     Unknown,
 }

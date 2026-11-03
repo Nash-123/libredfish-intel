@@ -1505,6 +1505,11 @@ impl RedfishStandard {
             RedfishVendor::DeltaPowerShelf => {
                 Ok(Box::new(crate::delta_powershelf::Bmc::new(self.clone())?))
             }
+            RedfishVendor::Intel => Ok(Box::new(crate::intel::Bmc::new(self.clone())?)),
+            RedfishVendor::Unknown if self.is_intel().await => {
+                self.vendor = Some(RedfishVendor::Intel);
+                Ok(Box::new(crate::intel::Bmc::new(self.clone())?))
+            }
             RedfishVendor::Sushy => Ok(Box::new(crate::sushy::Bmc::new(self.clone())?)),
             _ => Ok(Box::new(self.clone())),
         }
@@ -1520,6 +1525,16 @@ impl RedfishStandard {
                 .as_deref()
                 .map(|m| m.eq_ignore_ascii_case("Giga Computing"))
                 .unwrap_or(false),
+            Err(_) => false,
+        }
+    }
+
+    async fn is_intel(&self) -> bool {
+        match self.get_system().await {
+            Ok(sys) => sys
+                .manufacturer
+                .as_deref()
+                .is_some_and(|m| m.eq_ignore_ascii_case("Intel Corporation")),
             Err(_) => false,
         }
     }
