@@ -1,3 +1,4 @@
+#![allow(unreachable_pub)]
 /*
  * SPDX-License-Identifier: MIT
  *
